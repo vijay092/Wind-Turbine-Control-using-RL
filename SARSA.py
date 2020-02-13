@@ -169,7 +169,7 @@ for i in range(10000):
     x_next,c,done = environment.step(u,x);
     Power.append(c)
     x = np.copy(x_next)
-line_up, = plt.plot(Power)
+
 
 
 # Plot the power output of the turbine with traditional control law
@@ -183,8 +183,9 @@ for i in range(10000):
     Power_trad.append(c_trad)
     x_trad = np.copy(x_next_trad)
     
-    
+
+line_up, = plt.plot(Power)
 line_down, = plt.plot(Power_trad)
 
-plt.legend([line_up, line_down], ['Traditional Control', 'SARSA with NN'])
+plt.legend([line_down, line_up], ['Traditional Control', 'SARSA with NN'])
 plt.title('GenTorque Control with Uncertain Air Density')
