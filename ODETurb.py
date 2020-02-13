@@ -80,7 +80,7 @@ for i in range (len(lamda)):
     for j  in range (len(beta)):
         Cptry.append(Cp(lamda[i],0))
         
-print(np.max(Cptry))       
+print('Optimal value of Cp = ',np.max(Cptry))       
         
 
 

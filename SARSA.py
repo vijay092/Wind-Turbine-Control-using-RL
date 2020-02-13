@@ -163,7 +163,7 @@ while step < maxSteps:
 
 Power = []
 x = np.array([1,1,1,1])
-for i in range(50000):
+for i in range(10000):
     a = agent.action(x);
     u = Actions[a];
     x_next,c,done = environment.step(u,x);
@@ -177,11 +177,14 @@ line_up, = plt.plot(Power)
 Kopt = .28;
 Power_trad = []
 x_trad = np.array([1,1,1,1])
-for i in range(50000):
+for i in range(10000):
     u_trad = Kopt*x[2]**2;
     x_next_trad,c_trad,done = environment.step(u_trad,x_trad)
     Power_trad.append(c_trad)
     x_trad = np.copy(x_next_trad)
     
     
-line_up, = plt.plot(Power_trad)
+line_down, = plt.plot(Power_trad)
+
+plt.legend([line_up, line_down], ['Traditional Control', 'SARSA with NN'])
+plt.title('GenTorque Control with Uncertain Air Density')
