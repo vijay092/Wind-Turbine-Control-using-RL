@@ -21,12 +21,12 @@ def reset():
 def step(a,x):
     
     # simulate to get next step using euler
-    dt = 1e-3
+    dt = 1e-2
     x_next = x + dt*ODETurb.Turbine(0,x,a)
     
     # Rewards for the system
-    Kopt = 0.5787
-    rewards = Kopt*x_next[2]**3
+    Kopt = 0.28;
+    rewards = Kopt*x[2]**3;
     done =  x[0] > 1
     done = bool(done)
     

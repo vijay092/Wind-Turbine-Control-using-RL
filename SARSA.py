@@ -25,8 +25,9 @@ class nnQ(pt.nn.Module):
     def __init__(self,stateDim,numActions,numHiddenUnits,numLayers):
         super().__init__()
         
+        
         InputLayer = [pt.nn.Linear(stateDim+numActions,numHiddenUnits),
-                      pt.nn.ReLU()]
+                      pt.nn.Sigmoid()]
         
         HiddenLayers = []
         
@@ -52,7 +53,7 @@ class nnQ(pt.nn.Module):
         
     
 class sarsaAgent:
-    def __init__(self,stateDim,numActions,numHiddenUnits,numLayers,
+    def __init__(self,stateDim ,numActions,numHiddenUnits,numLayers,
                 epsilon=0.1,gamma=.9,alpha=.1):
         # These are the parameters
         self.Q = nnQ(stateDim,numActions,numHiddenUnits,numLayers)
@@ -113,14 +114,13 @@ class sarsaAgent:
 
 # Let us consider that  
 numActions = 10
-Actions = np.linspace(0.4,1,numActions)
+Actions = np.linspace(0,1,numActions)
 
 # This is our learning agent
 gamma = .95
-agent = sarsaAgent(4,numActions,20,1,epsilon=5e-2,gamma=gamma,alpha=1e-4)
+agent = sarsaAgent(4,numActions,10,1,epsilon=5e-2,gamma=gamma,alpha=1e-2)
 maxSteps = 1e5
 
-# This is a helper to deal with the fact that x[2] is actually an angle
 R = []
 UpTime = []
 
@@ -129,7 +129,7 @@ ep = 0
 while step < maxSteps:
     ep += 1
     x = environment.reset() # initialize the state
-    C = 0.  # WHATS C
+    C = 0.  
     
     done = False
     t = 1
@@ -159,31 +159,29 @@ while step < maxSteps:
 
 
 
-    
-    
-# Need to do the testing:
-# In this phase we want to test 
-Kopt = .5787
+# Plot the power output of the turbine with trained controller from RL
+
 Power = []
 x = np.array([1,1,1,1])
 for i in range(50000):
-    a = agent.action(x)
-    u = Actions[a]
-    x_next,c,done = environment.step(u,x)
+    a = agent.action(x);
+    u = Actions[a];
+    x_next,c,done = environment.step(u,x);
     Power.append(c)
     x = np.copy(x_next)
 line_up, = plt.plot(Power)
 
-# Kopt = .9
-# Power = []
-# x = np.array([1,1,1,1])
-# u = Kopt
-# for i in range(50000):
 
-#     x_next,c,done = environment.step(u,x)
-#     Power.append(c)
-#     x = np.copy(x_next)
-# line_down, = plt.plot(Power)
-# plt.legend([line_up, line_down], ['SARSA with NN', 'Traditional MPPT'])
-# plt.ylabel('Power Output (p.u.)')
-# plt.xlabel('Time Iterations')
+# Plot the power output of the turbine with traditional control law
+
+Kopt = .28;
+Power_trad = []
+x_trad = np.array([1,1,1,1])
+for i in range(50000):
+    u_trad = Kopt*x[2]**2;
+    x_next_trad,c_trad,done = environment.step(u_trad,x_trad)
+    Power_trad.append(c_trad)
+    x_trad = np.copy(x_next_trad)
+    
+    
+line_up, = plt.plot(Power_trad)

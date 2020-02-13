@@ -36,15 +36,17 @@ def Turbine(t,x, Control):
     ksh = 0.3; 
     csh = 0.01;
     wel = 2*np.pi*60;
-    #Kopt = .5787
-    rho = 1.225;
+    Kopt = .5787
+    
+    # add a little bit of uncertainty in the air density
+    rho = 1.225 + 1e-2 * np.random.randn();
     R_turb = 58.6;
     V = 12;
     Prated = 5e6;
     GB = 145.5;
     #wtB = wel/(2*GB);
     lamda = wt*R_turb/V;
-    beta = 0;
+    beta = Control;
     
     Tmbase =  GB * Prated * 1/(wel/2);
     
@@ -52,11 +54,10 @@ def Turbine(t,x, Control):
     Tm = 0.5 * rho * np.pi* R_turb**2 * Cp(lamda,beta) * V**3 /(wt*Tmbase);
     
     # Equations
-    #F[0] = 1/(2*Hg) * (ksh*theta_tw + \
-    #                       csh*wel* (wt - wg) - Kopt*wg**2);
+    # Control is the generator torque itself
     
     F[0] = 1/(2*Hg) * (ksh*theta_tw + \
-                           csh*wel* (wt - wg) - Control*wg**2 );
+                           csh*wel* (wt - wg) - Kopt*x[2]**2 );
     
     F[1] = wel*(wt - wg);
     
@@ -65,4 +66,21 @@ def Turbine(t,x, Control):
     
      
     return F
+
+
+
+# Let us check if indeed the maximum value of Cpmax is optimal. 
+
+
+lamda = np.linspace(0.5, 10.0, num=10)
+beta = np.linspace(-5,10 , 20)
+Cptry = []
+
+for i in range (len(lamda)):
+    for j  in range (len(beta)):
+        Cptry.append(Cp(lamda[i],0))
+        
+print(np.max(Cptry))       
+        
+
 
